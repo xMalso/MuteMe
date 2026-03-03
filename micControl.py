@@ -16,7 +16,8 @@ import logging
 
 logging.basicConfig(
     filename="voice_log.txt",
-    level=logging.ERROR,
+    filemode="w",
+    level=logging.DEBUG,
     format="%(asctime)s - %(message)s"
 )
 
@@ -41,7 +42,7 @@ def set_mic_mute(state, keystroke):
             # frequency = 440 if state else 880
             return True # AKA success
         except Exception as e:
-            logging.warning("Error controlling microphone:", e)
+            logging.warning("Error controlling microphone: " + str(e))
             if i == 1:
                 logging.warning("If this keeps happening, check microphone permissions and that a microphone is properly set up.")
             if i == 2:

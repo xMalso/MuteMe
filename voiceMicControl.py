@@ -1,6 +1,6 @@
 from datetime import datetime
 import queue
-import logging
+# import logging
 # import time
 from time import time, sleep
 # import os
@@ -14,7 +14,7 @@ import sounddevice as sd
 # from comtypes import CLSCTX_ALL
 # from ctypes import POINTER, cast
 
-from micControl import mute_mic
+from micControl import mute_mic, logging
 from settingsLoader import load_settings, get_settings_mtime, get_last_settings_update
 from speechRecognition import create_audio_callback, process_speech_data
 from vadDetection import create_voice_detected
@@ -22,12 +22,6 @@ from vadDetection import create_voice_detected
 settings = load_settings()
 settings_path = "settings.txt"
 last_settings_update = get_last_settings_update()
-
-logging.basicConfig(
-    filename="voice_log.txt",
-    level=logging.ERROR,
-    format="%(asctime)s - %(message)s"
-)
 
 q = queue.Queue()
 audio_callback = create_audio_callback(q)
@@ -71,7 +65,7 @@ def start_listening():
                     text = prev_text + " " + new_text
                     prev_text = new_text
 
-                    logging.debug("Heard:", text)
+                    logging.debug("Heard: " + text)
 
                     if settings["hey_required"] and "hey" not in text:
                         continue
@@ -91,15 +85,15 @@ def start_listening():
                         warning_sent = True
                     pass
                 except KeyboardInterrupt:
-                    if settings["unmute_on_exit"] and prev_state == False:
-                        mute_mic(True, 0, crash_count, time_of_last_crash, settings["mic_toggle_key"])
-                        logging.info("Unmuted microphone before exit.")
+                    # if settings["unmute_on_exit"] and prev_state == False:
+                    #     mute_mic(True, 0, crash_count, time_of_last_crash, settings["mic_toggle_key"])
+                    #     logging.info("Unmuted microphone before exit.")
                     logging.info("Exiting...")
                     break
                 except Exception as e:
                     crash_count += 1
                     time_of_last_crash = time()
-                    logging.warning("Error:", e)
+                    logging.warning("Error: " + str(e))
                     if crash_count < settings["crash_limit"]:
                         logging.info(f"Attempting again in {crash_count * 3} seconds...")
                         sleep(crash_count * 3)
@@ -108,12 +102,15 @@ def start_listening():
                         break
     except Exception as e:
         crash_count += 1
-        logging.warning("Audio stream error:", e)
+        logging.warning("Audio stream error: " + str(e))
         if crash_count < settings["crash_limit"]:
             logging.info("Restarting listening loop...")
             sleep(2)
             return True
-        logging.error("Too many errors, please send the error log to me on discord, discord ign: malso") 
+        logging.error("Too many errors, please send the error log to me on discord, discord ign: malso")
+        if settings["unmute_on_exit"] and prev_state == False:
+            mute_mic(True, 0, crash_count, time_of_last_crash, settings["mic_toggle_key"])
+            logging.info("Unmuted microphone before exit.")
         return False
 
 if __name__ == "__main__":
