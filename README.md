@@ -45,7 +45,7 @@ This contains suggested command phrases or replacements that work better with th
 
 The default speech model is intentionally lightweight to maintain low CPU usage and fast response times.
 
-Using larger speech recognition models can improve recognition accuracy but may increase memory and CPU usage. For most users, the default model provides the best balance between accuracy and performance.
+Using larger speech recognition models can improve recognition accuracy but may increase memory and CPU usage. The default model provides high performance without sacrificing major accuracy loss.
 
 ---
 
@@ -54,6 +54,11 @@ Using larger speech recognition models can improve recognition accuracy but may 
 Support and Feedback: Discord: malso
 
 ---
+
+## Donate
+
+Buy me a ~~Coffee~~ (I don't drink coffee)
+https://paypal.me/malsoo
 
 ## Files Included
 
