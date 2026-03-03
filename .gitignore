@@ -4,3 +4,4 @@ voice_log.txt
 /build
 /dist
 *.spec
+compile.txt
