@@ -5,3 +5,4 @@ voice_log.txt
 /dist
 *.spec
 compile.txt
+dist.zip

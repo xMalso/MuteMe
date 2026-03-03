@@ -1,7 +1,12 @@
 "Hi, if you want to have custom settings just change this default options provided and the code will do the rest"
 ---------- true or false ----------
 Hey Required = false
+
+Toggle again if muted when closing
 Unmute on exit = true
+
+Prevent unmuting when using mute commands and vice versa
+Disable double toggle = false
 
 ---------- numbers ---------------
 How long to wait (in minutes) before ignoring the fact there was a crash previously

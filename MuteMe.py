@@ -69,12 +69,12 @@ def start_listening():
                     if settings["hey_required"] and "hey" not in text:
                         continue
                     if any(cmd in text for cmd in settings["unmute_commands"]):
-                        if prev_state == False:
+                        if not settings["disable_double_toggle"] or prev_state == False:
                             crash_count, time_of_last_crash = mute_mic(True, settings["command_cooldown"], crash_count, time_of_last_crash, settings["mic_toggle_key"])
                             prev_state = True
                             prev_text = ""
                     elif any(cmd in text for cmd in settings["mute_commands"]):
-                        if prev_state == True:
+                        if not settings["disable_double_toggle"] or prev_state == True:
                             crash_count, time_of_last_crash = mute_mic(False, settings["command_cooldown"], crash_count, time_of_last_crash, settings["mic_toggle_key"])
                             prev_state = False
                             prev_text = ""

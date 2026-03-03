@@ -6,6 +6,7 @@ last_settings_update = os.path.getmtime(settings_path)
 settings = {
         "hey_required": True,
         "unmute_on_exit": True,
+        "disable_double_toggle": False,
         "crash_timer_limit": 5 * 60,
         "crash_limit": 5,
         "command_cooldown": 0.5,
@@ -19,6 +20,8 @@ def load_settings():
     global last_settings_update, settings, section
     # settings = {
     #     "hey_required": True,
+    #     "unmute_on_exit": True,
+    #     "disable_double_toggle": False,
     #     "crash_timer_limit": 5 * 60,
     #     "crash_limit": 5,
     #     "command_cooldown": 0.5,
@@ -39,6 +42,9 @@ def load_settings():
                 section = None
             elif line.startswith("unmute on exit"):
                 settings["unmute_on_exit"] = "true" in line
+                section = None
+            elif line.startswith("disable double toggle"):
+                settings["disable_double_toggle"] = "true" in line
                 section = None
             elif line.startswith("crash timer limit"):
                 settings["crash_timer_limit"] = int(
