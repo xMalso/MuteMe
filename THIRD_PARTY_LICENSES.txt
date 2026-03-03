@@ -1,0 +1,2 @@
+This project uses Vosk speech recognition models.
+Models are subject to their respective licenses.

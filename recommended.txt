@@ -1,0 +1,5 @@
+recommended command length is 2
+
+recommended words to not include and their replacements
+mute -> meet
+mic -> mike
