@@ -2,7 +2,7 @@ import json
 
 from vosk import Model, KaldiRecognizer
 
-model = Model("voice models/vosk-model-small-en-us-0.15")
+model = Model("assets/voice models/vosk-model-small-en-us-0.15")
 recognizer = KaldiRecognizer(model, 16000)
 
 

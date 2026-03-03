@@ -1,6 +1,6 @@
 import os
 
-settings_path = "settings.txt"
+settings_path = "assets/txt files/settings.txt"
 last_settings_update = os.path.getmtime(settings_path)
 
 settings = {
@@ -30,7 +30,7 @@ def load_settings():
 
     section = None
 
-    with open("settings.txt", "r", encoding="utf-8") as f:
+    with open(settings_path, "r", encoding="utf-8") as f:
         for line in f:
             line = line.strip().lower()
 

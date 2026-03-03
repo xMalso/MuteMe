@@ -20,7 +20,6 @@ from speechRecognition import create_audio_callback, process_speech_data
 from vadDetection import create_voice_detected
 
 settings = load_settings()
-settings_path = "settings.txt"
 last_settings_update = get_last_settings_update()
 
 q = queue.Queue()
