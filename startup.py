@@ -5,6 +5,7 @@ import win32com.client
 # import pystray
 from micControl import logging
 
+exe_name =  os.path.basename(sys.executable)
 STARTUP_FOLDER = os.path.join(
     os.environ["APPDATA"],
     r"Microsoft\Windows\Start Menu\Programs\Startup"
@@ -12,7 +13,7 @@ STARTUP_FOLDER = os.path.join(
 
 def add_to_startup():
     exe_path = sys.executable
-    shortcut_path = os.path.join(STARTUP_FOLDER, "VoiceMute.lnk")
+    shortcut_path = os.path.join(STARTUP_FOLDER, f"{exe_name}.lnk")
 
     shell = win32com.client.Dispatch("WScript.Shell")
     shortcut = shell.CreateShortcut(shortcut_path)
@@ -28,7 +29,7 @@ def remove_from_startup():
     )
 
     exe_name = os.path.basename(sys.executable)
-    startup_file = os.path.join(startup_folder, exe_name)
+    startup_file = os.path.join(startup_folder, f"{exe_name}.lnk")
 
     if os.path.exists(startup_file):
         os.remove(startup_file)
@@ -46,5 +47,5 @@ def toggle_startup(icon):
     icon.update_menu()
 
 def is_in_startup():
-    shortcut_path = os.path.join(STARTUP_FOLDER, "VoiceMute.lnk")
+    shortcut_path = os.path.join(STARTUP_FOLDER, f"{exe_name}.lnk")
     return os.path.exists(shortcut_path)

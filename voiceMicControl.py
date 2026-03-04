@@ -64,7 +64,8 @@ def start_listening():
                     text = prev_text + " " + new_text
                     prev_text = new_text
 
-                    logging.debug("Heard: " + text)
+                    if settings["Debug Audio"]:
+                        logging.debug("Heard: " + text)
 
                     if settings["hey_required"] and "hey" not in text:
                         continue
