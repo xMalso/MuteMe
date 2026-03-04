@@ -6,3 +6,4 @@ voice_log.txt
 *.spec
 compile.txt
 dist.zip
+/venv

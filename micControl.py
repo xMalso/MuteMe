@@ -17,7 +17,7 @@ import logging
 logging.basicConfig(
     filename="voice_log.txt",
     filemode="w",
-    level=logging.DEBUG,
+    level=logging.WARN,
     format="%(asctime)s - %(message)s"
 )
 
