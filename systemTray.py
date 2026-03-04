@@ -1,6 +1,7 @@
 import sys
 from PIL import Image, ImageDraw
 import pystray
+import webbrowser
 # from sympy import root
 from startup import toggle_startup, is_in_startup
 
@@ -15,12 +16,16 @@ def quit_app(icon, item):
     icon.stop()
     sys.exit(0)
 
+def open_link(icon, item):
+    webbrowser.open("https://paypal.me/malsoo")
+
 def run_tray():
     icon = pystray.Icon(
         "VoiceMute",
         create_image(),
         "Voice Mute Controller",
         menu=pystray.Menu(
+            pystray.MenuItem("Buy me a not coffee", open_link),
             pystray.MenuItem(
                 "Run on Startup", toggle_startup,
                 checked=lambda item: is_in_startup(),
