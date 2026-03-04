@@ -13,6 +13,8 @@ The program is designed to be lightweight and donationware. Please do not redist
 1. Run the executable file (under releases on the right side).
 2. The program will automatically start listening for voice commands.
 3. Use your configured voice commands to control microphone mute status.
+4. Enable/Disable Run on Startup in System Tray
+5. Exit from System Tray
 
 ---
 
@@ -72,7 +74,7 @@ https://paypal.me/malsoo
 ## Privacy
 
 No audio data is stored or transmitted externally.  
-All processing is performed locally and discarded after processing.
+All processing is performed locally and discarded immediately after processing.
 
 ---
 
