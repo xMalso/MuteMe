@@ -10,11 +10,13 @@ The program is designed to be lightweight and donationware. Please do not redist
 
 ## Usage
 
-1. Run the executable file (under releases on the right side).
-2. The program will automatically start listening for voice commands.
-3. Use your configured voice commands to control microphone mute status.
-4. Enable/Disable Run on Startup in System Tray
-5. Exit from System Tray
+1. Set up a keybind to mute
+2. Assign keybind in assets/txt files/settings.txt
+3. Run the executable file (under releases on the right side).
+4. The program will automatically start listening for voice commands.
+5. Use your configured voice commands to control your microphone mute status.
+6. Enable/Disable Run on Startup in System Tray
+7. Exit from System Tray
 
 ---
 
@@ -23,7 +25,7 @@ The program is designed to be lightweight and donationware. Please do not redist
 Edit:
 
 ```
-settings.txt
+assets/txt files/settings.txt
 ```
 
 You can customize:
@@ -39,7 +41,7 @@ For best recognition results, check:
 recommended.txt
 ```
 
-This contains suggested command phrases or replacements that work better with the speech model.
+This contains suggested command phrases or replacements that work better with the speech model, or even ways to see what the program is picking up.
 
 ---
 
@@ -59,14 +61,14 @@ Support and Feedback: Discord: malso
 
 ## Donate
 
-Buy me a ~~Coffee~~ (I don't drink coffee)
+Buy me a not coffee.
 https://paypal.me/malsoo
 
 ## Files Included
 
 * Executable program
-* `settings.txt` – User configuration
-* `recommended.txt` – Suggested voice commands
+* `assets/txt files/settings.txt` – User configuration
+* `assets/txt files/recommended.txt` – Suggested voice commands
 * `requirements.txt` – Python dependencies (if running from source)  USE PYTHON 3.11.9!!!!!
 
 ---
