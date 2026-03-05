@@ -6,7 +6,7 @@ from time import time, sleep
 # import os
 # import json
 import sounddevice as sd
-
+import ctypes
 # from vosk import Model, KaldiRecognizer
 # import webrtcvad
 
@@ -30,6 +30,8 @@ crash_count = 0
 
 def start_listening():
     global crash_count, settings, last_settings_update, voice_detected
+    # if not debug_mode:
+    #     ctypes.windll.kernel32.FreeConsole()
     prev_state = True
     time_of_last_crash = time()
     warning_sent = False
@@ -63,10 +65,8 @@ def start_listening():
                         continue
                     text = prev_text + " " + new_text
                     prev_text = new_text
-
-                    if settings["Debug Audio"]:
-                        logging.debug("Heard: " + text)
-
+                    print(f"Text heard: {new_text}")
+                    logging.debug(f"New text: {new_text}, Full text: {text}")
                     if settings["hey_required"] and "hey" not in text:
                         continue
                     if any(cmd in text for cmd in settings["unmute_commands"]):
@@ -89,7 +89,7 @@ def start_listening():
                     #     mute_mic(True, 0, crash_count, time_of_last_crash, settings["mic_toggle_key"])
                     #     logging.info("Unmuted microphone before exit.")
                     logging.info("Exiting...")
-                    break
+                    return False
                 except Exception as e:
                     crash_count += 1
                     time_of_last_crash = time()
@@ -99,7 +99,7 @@ def start_listening():
                         sleep(crash_count * 3)
                     else:
                         logging.error("Too many errors, please send the error log to me on discord, discord ign: malso") 
-                        break
+                        return False
     except Exception as e:
         crash_count += 1
         logging.warning("Audio stream error: " + str(e))

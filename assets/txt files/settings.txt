@@ -3,7 +3,7 @@
 Hey Required = false
 
 Toggle again if muted when closing
-Unmute on exit = true
+Unmute on exit = false
 
 Prevent unmuting when using mute commands and vice versa
 Disable double toggle = false
@@ -25,10 +25,10 @@ Surround text to be detected by double apostrophes and seperate using a comma e.
 DONT include commas as a part of ur command as it will never work as a command
 READ recommended.txt FIRST
 Mute Commands
-"mike off"
+"mike off","like off","mike of","like of"
 
 Unmute Commands
-"mike on"
+"mike on","like on"
 
 ---------- misc ------------------
 Use + to seperate keystrokes, case insensitive, this key will be pressed

@@ -67,7 +67,7 @@ https://paypal.me/malsoo
 * Executable program
 * `settings.txt` – User configuration
 * `recommended.txt` – Suggested voice commands
-* `requirements.txt` – Python dependencies (if running from source)
+* `requirements.txt` – Python dependencies (if running from source)  USE PYTHON 3.11.9!!!!!
 
 ---
 

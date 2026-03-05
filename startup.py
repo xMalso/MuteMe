@@ -5,34 +5,34 @@ import win32com.client
 # import pystray
 from micControl import logging
 
-exe_name =  os.path.basename(sys.executable)
 STARTUP_FOLDER = os.path.join(
     os.environ["APPDATA"],
     r"Microsoft\Windows\Start Menu\Programs\Startup"
 )
 
+def get_exe_path():
+    return sys.executable
+
+def get_exe_name():
+    return os.path.splitext(os.path.basename(get_exe_path()))[0]
+
+def get_startup_shortcut_path():
+    exe_name = get_exe_name()
+    return os.path.join(STARTUP_FOLDER, f"{exe_name}.lnk")
+
 def add_to_startup():
-    exe_path = sys.executable
-    shortcut_path = os.path.join(STARTUP_FOLDER, f"{exe_name}.lnk")
+    exe_path = get_exe_path()
 
     shell = win32com.client.Dispatch("WScript.Shell")
-    shortcut = shell.CreateShortcut(shortcut_path)
+    shortcut = shell.CreateShortcut(get_startup_shortcut_path())
 
     shortcut.TargetPath = exe_path
     shortcut.WorkingDirectory = os.path.dirname(exe_path)
     shortcut.save()
 
 def remove_from_startup():
-    startup_folder = os.path.join(
-        os.environ["APPDATA"],
-        r"Microsoft\Windows\Start Menu\Programs\Startup"
-    )
-
-    exe_name = os.path.basename(sys.executable)
-    startup_file = os.path.join(startup_folder, f"{exe_name}.lnk")
-
-    if os.path.exists(startup_file):
-        os.remove(startup_file)
+    if is_in_startup():
+        os.remove(get_startup_shortcut_path())
         logging.info("Removed from startup.")
     else:
         logging.warn("Startup entry not found.")
@@ -47,5 +47,4 @@ def toggle_startup(icon):
     icon.update_menu()
 
 def is_in_startup():
-    shortcut_path = os.path.join(STARTUP_FOLDER, f"{exe_name}.lnk")
-    return os.path.exists(shortcut_path)
+    return os.path.exists(get_startup_shortcut_path())

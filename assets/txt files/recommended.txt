@@ -1,5 +1,7 @@
-recommended command length is 2
+if you want to make new commands try out debug mode  (right click tray)
+
+recommended command length is 2 words
 
 recommended words to not include and their replacements
 mute -> meet
-mic -> mike
+mic -> mike, like
