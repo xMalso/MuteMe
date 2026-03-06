@@ -1,4 +1,4 @@
-# MuteMd
+# MuteMe
 
 ## About
 
