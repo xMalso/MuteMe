@@ -62,7 +62,7 @@ Support and Feedback: Discord: malso
 ## Donate
 
 Buy me a not coffee.
-https://paypal.me/malsoo
+https://paypal.me/xmalso
 
 ## Files Included
 

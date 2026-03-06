@@ -71,7 +71,7 @@ def quit_app(icon, item):
 
 
 def open_link(icon, item):
-    webbrowser.open("https://paypal.me/malsoo")
+    webbrowser.open("https://paypal.me/xmalso")
 
 
 def open_settings(icon, item):
