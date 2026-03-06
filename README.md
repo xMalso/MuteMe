@@ -1,8 +1,8 @@
-# Voice Mic Control
+# MuteMe
 
 ## About
 
-Voice Mic Control is an executable voice automation tool that lets you mute or unmute your microphone using custom audio cues.
+MuteMe is an executable voice automation tool that lets you mute or unmute your microphone using custom audio cues.
 
 The program is designed to be lightweight and donationware. Please do not redistribute or claim credit for this project.
 
