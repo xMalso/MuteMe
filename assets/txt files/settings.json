@@ -1,0 +1,17 @@
+{
+    "hey_required": false,
+    "unmute_on_exit": true,
+    "double_toggle": false,
+    "crash_timer_limit": 300,
+    "crash_limit": 5,
+    "command_cooldown": 0.5,
+    "vad_aggressiveness": 3,
+    "mute_commands": [
+        "mike of",
+        "mike off"
+    ],
+    "unmute_commands": [
+        "mike on"
+    ],
+    "mute_hotkey": "ctrl+f12"
+}

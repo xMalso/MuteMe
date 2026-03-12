@@ -1,26 +1,15 @@
 from datetime import datetime
 import queue
-# import logging
-# import time
 from time import time, sleep
-# import os
-# import json
 import sounddevice as sd
-import ctypes
-# from vosk import Model, KaldiRecognizer
-# import webrtcvad
-
-# from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
-# from comtypes import CLSCTX_ALL
-# from ctypes import POINTER, cast
 
 from micControl import mute_mic, logging
-from settingsLoader import load_settings, get_settings_mtime, get_last_settings_update
+from settingsLoader import load_settings, get_settings_mtime
 from speechRecognition import create_audio_callback, process_speech_data
 from vadDetection import create_voice_detected
 
 settings = load_settings()
-last_settings_update = get_last_settings_update()
+last_settings_update = get_settings_mtime()
 
 q = queue.Queue()
 audio_callback = create_audio_callback(q)
@@ -28,10 +17,9 @@ audio_callback = create_audio_callback(q)
 voice_detected = create_voice_detected(settings["vad_aggressiveness"])
 crash_count = 0
 
+
 def start_listening():
     global crash_count, settings, last_settings_update, voice_detected
-    # if not debug_mode:
-    #     ctypes.windll.kernel32.FreeConsole()
     prev_state = True
     time_of_last_crash = time()
     warning_sent = False
@@ -44,50 +32,62 @@ def start_listening():
             blocksize=8000,
             dtype="int16",
             channels=1,
-            callback=audio_callback
+            callback=audio_callback,
         ):
 
             while True:
-                # logging.debug(time())
                 try:
                     if time() - time_of_last_crash > settings["crash_timer_limit"]:
                         crash_count = 0
                     if get_settings_mtime() > last_settings_update + 0.2:
                         logging.info("Settings file changed, reloading settings...")
                         settings = load_settings()
-                        voice_detected = create_voice_detected(settings["vad_aggressiveness"])
-                        last_settings_update = get_last_settings_update()
+                        voice_detected = create_voice_detected(
+                            settings["vad_aggressiveness"]
+                        )
+                        last_settings_update = get_settings_mtime()
                     data = q.get(timeout=5)
                     if not voice_detected(data):
                         continue
                     new_text = process_speech_data(data)
                     if not new_text or new_text == "":
                         continue
-                    text = prev_text + " " + new_text
+                    text = " " + prev_text + " " + new_text + " "
                     prev_text = new_text
                     print(f"Text heard: {new_text}")
                     logging.debug(f"New text: {new_text}, Full text: {text}")
                     if settings["hey_required"] and "hey" not in text:
                         continue
-                    if any(cmd in text for cmd in settings["unmute_commands"]):
-                        if not settings["disable_double_toggle"] or prev_state == False:
-                            crash_count, time_of_last_crash = mute_mic(True, settings["command_cooldown"], crash_count, time_of_last_crash, settings["mic_toggle_key"])
+                    if any(f" {cmd} " in text for cmd in settings["unmute_commands"]):
+                        if settings["double_toggle"] or prev_state == False:
+                            crash_count, time_of_last_crash = mute_mic(
+                                True,
+                                settings["command_cooldown"],
+                                crash_count,
+                                time_of_last_crash,
+                                settings["mute_hotkey"],
+                            )
                             prev_state = True
                             prev_text = ""
-                    elif any(cmd in text for cmd in settings["mute_commands"]):
-                        if not settings["disable_double_toggle"] or prev_state == True:
-                            crash_count, time_of_last_crash = mute_mic(False, settings["command_cooldown"], crash_count, time_of_last_crash, settings["mic_toggle_key"])
+                    elif any(f" {cmd} " in text for cmd in settings["mute_commands"]):
+                        if settings["double_toggle"] or prev_state == True:
+                            crash_count, time_of_last_crash = mute_mic(
+                                False,
+                                settings["command_cooldown"],
+                                crash_count,
+                                time_of_last_crash,
+                                settings["mute_hotkey"],
+                            )
                             prev_state = False
                             prev_text = ""
                 except queue.Empty:
                     if not warning_sent:
-                        logging.info(f"No audio input detected. for 5 seconds. This warning will only appear once per load, timestamp: {datetime.now().strftime('%A %H:%M:%S')}")
+                        logging.info(
+                            f"No audio input detected. for 5 seconds. This warning will only appear once per load, timestamp: {datetime.now().strftime('%A %H:%M:%S')}"
+                        )
                         warning_sent = True
                     pass
                 except KeyboardInterrupt:
-                    # if settings["unmute_on_exit"] and prev_state == False:
-                    #     mute_mic(True, 0, crash_count, time_of_last_crash, settings["mic_toggle_key"])
-                    #     logging.info("Unmuted microphone before exit.")
                     logging.info("Exiting...")
                     return False
                 except Exception as e:
@@ -95,10 +95,14 @@ def start_listening():
                     time_of_last_crash = time()
                     logging.warning("Error: " + str(e))
                     if crash_count < settings["crash_limit"]:
-                        logging.info(f"Attempting again in {crash_count * 3} seconds...")
+                        logging.info(
+                            f"Attempting again in {crash_count * 3} seconds..."
+                        )
                         sleep(crash_count * 3)
                     else:
-                        logging.error("Too many errors, please send the error log to me on discord, discord ign: malso") 
+                        logging.error(
+                            "Too many errors, please send the error log to me on discord, discord ign: malso"
+                        )
                         return False
     except Exception as e:
         crash_count += 1
@@ -107,12 +111,10 @@ def start_listening():
             logging.info("Restarting listening loop...")
             sleep(2)
             return True
-        logging.error("Too many errors, please send the error log to me on discord, discord ign: malso")
+        logging.error(
+            "Too many errors, please send the error log to me on discord, discord ign: malso"
+        )
         if settings["unmute_on_exit"] and prev_state == False:
-            mute_mic(True, 0, crash_count, time_of_last_crash, settings["mic_toggle_key"])
+            mute_mic(True, 0, crash_count, time_of_last_crash, settings["mute_hotkey"])
             logging.info("Unmuted microphone before exit.")
         return False
-
-# if __name__ == "__main__":
-#     while start_listening():
-#         pass

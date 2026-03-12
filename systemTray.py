@@ -1,139 +1,126 @@
-import os
-import subprocess
 import sys
-import time
+import threading
+from PySide6.QtWidgets import QApplication
+from PySide6.QtCore import Qt, QObject, Signal
+from PySide6.QtGui import QGuiApplication
 from PIL import Image, ImageDraw
 import pystray
 import webbrowser
 import ctypes
-# from sympy import root
+
 from startup import toggle_startup, is_in_startup
 from micControl import logging
+from settingsGUI import load_gui
 import debugMode
-# from voiceMicControl import start_listening
 
 for name in ["PIL", "PIL.Image", "PIL.PngImagePlugin"]:
     logging.getLogger(name).disabled = True
 
-
 debug_mode = False
-# debug_process = None
-# DEBUG_INSTANCE = "--debug" in sys.argv
 kernel32 = ctypes.windll.kernel32
 CTRL_CLOSE_EVENT = 2
+settings_window = None
+icon = None
 
-# def console_exists():
-#     return ctypes.windll.kernel32.GetConsoleWindow() != 0
- 
-# def enable_console():
-#     if not console_exists():
-#         ctypes.windll.kernel32.AllocConsole()
-#         sys.stdout = open("CONOUT$", "w", buffering=1)
-#         sys.stderr = open("CONOUT$", "w", buffering=1)
-#         logging.info("Debug mode enabled.")
-#         return True
-#     else:
-#         logging.warn("Debug mode already enabled.")
-#         return False
 
-# def disable_console():
-#     if console_exists():
-#         ctypes.windll.kernel32.FreeConsole()
-#         logging.info("Debug mode disabled.")
-#         return True
-#     else:
-#         logging.warn("Debug mode already disabled.")
-#         return False
+# --- Signal bridge (thread-safe Qt communication) ---
+class TraySignals(QObject):
+    open_settings_signal = Signal()
+    quit_signal = Signal()
 
-# def console_handler(event):
-#     if event == CTRL_CLOSE_EVENT:
-#         # Just hide the console instead of terminating app
-#         disable_console()
-#         global debug_mode
-#         debug_mode = False
-#         return True  # Prevent default termination
-#     return False
 
-# handler = ctypes.WINFUNCTYPE(ctypes.c_bool, ctypes.c_uint)(console_handler)
-# kernel32.SetConsoleCtrlHandler(handler, True)
+tray_signals = TraySignals()
+
 
 def create_image():
-    # Simple black/white square icon
     image = Image.new("RGB", (64, 64), color="black")
     draw = ImageDraw.Draw(image)
     draw.rectangle((16, 16, 48, 48), fill="white")
     return image
 
 
-def quit_app(icon, item):
+def show_window():
+    global settings_window
+    if settings_window is None:
+        logging.debug("Loading settings window...")
+        screen = QGuiApplication.primaryScreen().availableGeometry()
+        width = int(screen.width() * 0.8)
+        height = int(screen.height() * 0.8)
+        x = screen.x() + (screen.width() - width) // 2
+        y = screen.y() + (screen.height() - height) // 2
+        settings_window = load_gui()
+        settings_window.setGeometry(x, y, width, height)
+        # settings_window.setAttribute(Qt.WA_DeleteOnClose, False)
+        # settings_window.destroyed.connect(reset_settings_window)
+    else:
+        logging.debug("Settings window already open. Bringing it to the front.")
+    settings_window.showNormal()
+    settings_window.raise_()
+
+
+# def reset_settings_window():
+#     global settings_window
+#     settings_window = None
+
+
+def open_settings(icon, item):
+    tray_signals.open_settings_signal.emit()
+
+
+def _do_quit():
+    global icon
     icon.stop()
-    sys.exit(0)
+    app = QApplication.instance()
+    if app:
+        app.quit()
+
+
+def quit_app(icon, item):
+    tray_signals.quit_signal.emit()
 
 
 def open_link(icon, item):
     webbrowser.open("https://paypal.me/MohamedAlsowmely")
 
 
-def open_settings(icon, item):
-    if getattr(sys, "frozen", False):
-        base_dir = os.path.dirname(sys.executable)
-    else:
-        base_dir = os.path.dirname(os.path.abspath(__file__))
-
-    settings_path = os.path.join(base_dir, "assets", "txt files", "settings.txt")
-    subprocess.Popen(["notepad.exe", settings_path])
-
 def toggle_debug_mode(icon, item):
-    global debug_mode#,  debug_process
-    # print(f"debug mode: {debug_mode}")
+    global debug_mode
     if not debugMode.is_enabled():
-        # Start debug instance with console
-        # if getattr(sys, "frozen", False):
-        #     # Running from EXE
-        #     main_exe = sys.executable
-
-        #     debug_process = subprocess.Popen(
-        #         [main_exe, "--debug"],
-        #         creationflags=subprocess.CREATE_NEW_CONSOLE
-        #     )
         debugMode.enable()
         print("Debug mode enabled.")
-        print("This console will output what the program is hearing." )
+        print("This console will output what the program is hearing.")
         print("You can see what audio is being detected versus what you are saying.")
-        print("Use this to determine relevant voice commands adjustments for your settings.")
+        print(
+            "Use this to determine relevant voice commands adjustments for your settings."
+        )
+        print(
+            "DO NOT CLOSE USING THE X BUTTON, USE THE DEBUG MODE OPTION IN THE TRAY MENU TO CLOSE THIS CONSOLE. otherwise the program will end."
+        )
         debug_mode = True
-        
     else:
         debugMode.disable()
         debug_mode = False
-
     icon.update_menu()
 
-# def check_debug_process():
-#     global debug_mode#, debug_process
-#     while True:
-#         time.sleep(2)
-#         if debug_mode:
-#             if not console_exists():
-#                 logging.info("Debug console closed (possibly by user).")
-#             # if debug_process.poll() is not None:
-#                 # debug_process = None
-#             debug_mode = False
-#             icon.update_menu()
 
+tray_signals.open_settings_signal.connect(show_window)
+tray_signals.quit_signal.connect(_do_quit)
 
 
 def run_tray():
     global icon
+
     icon = pystray.Icon(
         "MuteMe",
         create_image(),
         "Mute Me",
         menu=pystray.Menu(
             pystray.MenuItem("Buy me a not coffee", open_link),
-            pystray.MenuItem("Options", open_settings),
+            pystray.MenuItem("Settings", open_settings),
             pystray.MenuItem(
-                "Debug Mode", toggle_debug_mode, checked=lambda item: debugMode.is_enabled()
+                "Debug Mode",
+                toggle_debug_mode,
+                checked=lambda item: debugMode.is_enabled(),
             ),
             pystray.MenuItem(
                 "Run on Startup",
@@ -143,31 +130,13 @@ def run_tray():
             pystray.MenuItem("Quit", quit_app),
         ),
     )
-    icon.run()
+    threading.Thread(target=icon.run, daemon=True).start()
 
-# def set_debug_process(process):
-#     global debug_process
-#     debug_process = process
-
-# def get_debug_process():
-    # global debug_process
-    # return debug_process
 
 def set_debug_mode(mode):
     global debug_mode
     debug_mode = mode
 
+
 def get_debug_mode():
-    # global debug_mode
     return debug_mode
-
-# def minimise_to_tray():
-#     root.withdraw()
-
-# if __name__ == "__main__" and DEBUG_INSTANCE:
-#     print("Debug mode enabled.")
-#     print("This console will output what the program is hearing." )
-#     print("You can see what audio is being detected versus what you are saying.")
-#     print("Use this to determine relevant voice commands adjustments for your settings.")
-#     while start_listening(True):
-#         pass

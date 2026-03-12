@@ -9,6 +9,7 @@ recognizer = KaldiRecognizer(model, 16000)
 def create_audio_callback(q):
     def audio_callback(indata, frames, time, status):
         q.put(bytes(indata))
+
     return audio_callback
 
 
