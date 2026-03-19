@@ -10,23 +10,17 @@ The program is designed to be lightweight and donationware. Please do not redist
 
 ## Usage
 
-1. Set up a keybind to mute
-2. Assign keybind in assets/txt files/settings.txt
-3. Run the executable file (under releases on the right side).
-4. The program will automatically start listening for voice commands.
+1. Run the executable file (under releases on the right side).
+2. The program will automatically start listening for voice commands.
+3. Set up a keybind to mute.
+4. Edit settings from System Tray.
 5. Use your configured voice commands to control your microphone mute status.
-6. Enable/Disable Run on Startup in System Tray
-7. Exit from System Tray
+6. Enable/Disable Run on Startup in System Tray.
+7. Exit from System Tray.
 
 ---
 
 ## Configuration
-
-Edit:
-
-```
-assets/txt files/settings.txt
-```
 
 You can customize:
 
@@ -34,14 +28,15 @@ You can customize:
 * Command cooldowns
 * Crash handling limits
 * Voice commands for mute and unmute
+* Unmute on quit
 
 For best recognition results, check:
 
 ```
-recommended.txt
+assets/txt files/recommended.txt
 ```
 
-This contains suggested command phrases or replacements that work better with the speech model, or even ways to see what the program is picking up.
+This contains suggested command phrases or replacements that work better with the speech model, and how to open debug mode.
 
 ---
 
@@ -67,7 +62,6 @@ https://paypal.me/MohamedAlsowmely
 ## Files Included
 
 * Executable program
-* `assets/txt files/settings.txt` – User configuration
 * `assets/txt files/recommended.txt` – Suggested voice commands
 * `requirements.txt` – Python dependencies (if running from source)  USE PYTHON 3.11.9!!!!!
 
